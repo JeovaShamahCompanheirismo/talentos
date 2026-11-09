@@ -21,6 +21,7 @@
   --mata:#7FBF8C; --mata-claro:#223127; --ocre:#E3A93F; --ocre-claro:#3A2F18; --erro:#F2B8B5;
   color-scheme:dark;}}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--chao);color:var(--tinta);font:16px/1.55 var(--f-texto);
   padding:env(safe-area-inset-top,0) max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
@@ -66,7 +67,10 @@ button:hover{filter:brightness(1.08)} button:disabled{opacity:.6;cursor:wait}
 button:focus-visible{outline:3px solid var(--ocre);outline-offset:2px}
 .msg{padding:12px 14px;border-radius:8px;font-size:15px}
 .msg.erro{background:color-mix(in srgb,var(--erro) 14%,transparent);color:var(--erro);font-weight:700}
-.sucesso{text-align:center;background:var(--papel);border:1px solid var(--linha);border-radius:12px;padding:36px 22px}
+.sucesso{text-align:center;background:var(--ocre-claro);border:2px solid var(--ocre);border-radius:14px;padding:36px 22px;margin-top:8px}
+.sucesso .selo{width:72px;height:72px;margin:0 auto 14px;border-radius:50%;background:var(--mata);color:var(--papel);
+  display:grid;place-items:center;font:800 40px/1 var(--f-titulo)}
+.sucesso p strong{color:var(--tinta)}
 .sucesso h2{font:800 28px/1.1 var(--f-titulo);font-stretch:112%;color:var(--mata);margin:0 0 10px}
 .sucesso p{color:var(--suave);margin:0 auto 18px;max-width:46ch}
 .sucesso button{width:auto}
@@ -182,8 +186,9 @@ footer{margin-top:28px;text-align:center;color:var(--suave);font-size:13px}
   </form>
 
   <div id="ok" class="sucesso" hidden>
+    <div class="selo" aria-hidden="true">✓</div>
     <h2>Cadastro recebido!</h2>
-    <p>Deus abençoe sua disposição em servir. A equipe da obra vai entrar em contato pelo WhatsApp para combinar sua participação.</p>
+    <p><strong id="okNome"></strong> Deus abençoe sua disposição em servir. A equipe da obra vai entrar em contato pelo WhatsApp para combinar sua participação.</p>
     <button type="button" id="novo">Cadastrar outra pessoa</button>
   </div>
 
@@ -263,7 +268,9 @@ $("form").addEventListener("submit", async ev => {
   const { error } = await sb.from("talentos").insert(linha);
   b.disabled = false; b.textContent = "Enviar meu cadastro";
   if (error) { console.error(error); return erro("Não foi possível enviar agora. Verifique sua internet e tente de novo."); }
-  $("form").hidden = true; $("ok").hidden = false; window.scrollTo({top:0,behavior:"smooth"});
+  $("okNome").textContent = "Obrigado, " + nome.split(" ")[0] + "!";
+  $("form").reset(); $("form").hidden = true; $("ok").hidden = false;
+  $("ok").scrollIntoView({behavior:"smooth", block:"start"});
 });
 $("novo").addEventListener("click", () => { $("form").reset(); $("ok").hidden = true; $("form").hidden = false; window.scrollTo({top:0}); });
 </script>

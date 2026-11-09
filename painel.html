@@ -10,23 +10,30 @@
 <style>
 :root{
   --chao:#F3F1EA; --papel:#FFFFFF; --tinta:#1F2A22; --suave:#5C6A5F; --linha:#D9DDD3;
-  --mata:#2F5D3A; --mata-claro:#E3EDE2; --ocre:#C98A1B; --ocre-claro:#F8EBD0; --erro:#B3261E;
+  --mata:#2F5D3A; --mata-claro:#E3EDE2; --ocre:#C98A1B; --ocre-claro:#F8EBD0; --erro:#B3261E; --erro-claro:#F9E1DF;
   --f-titulo:"Archivo",system-ui,sans-serif; --f-texto:"Nunito Sans",system-ui,sans-serif; color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root{
   --chao:#121713; --papel:#1A211C; --tinta:#E8ECE6; --suave:#A3AEA5; --linha:#2E3830;
-  --mata:#7FBF8C; --mata-claro:#223127; --ocre:#E3A93F; --ocre-claro:#3A2F18; --erro:#F2B8B5; color-scheme:dark;}}
+  --mata:#7FBF8C; --mata-claro:#223127; --ocre:#E3A93F; --ocre-claro:#3A2F18; --erro:#F2B8B5; --erro-claro:#3B1F1D; color-scheme:dark;}}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{margin:0;background:var(--chao);color:var(--tinta);font:15px/1.5 var(--f-texto);
   padding:env(safe-area-inset-top,0) max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
 .wrap{max-width:1100px;margin:0 auto}
-header{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;padding:24px 0 16px;border-bottom:3px solid var(--mata);margin-bottom:20px}
+header{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;padding:24px 0 0;border-bottom:3px solid var(--mata);margin-bottom:20px}
 .kicker{font:700 12px/1 var(--f-texto);letter-spacing:.12em;text-transform:uppercase;color:var(--ocre)}
-h1{font:800 30px/1.1 var(--f-titulo);font-stretch:112%;margin:8px 0 0;color:var(--mata)}
+h1{font:800 30px/1.1 var(--f-titulo);font-stretch:112%;margin:8px 0 14px;color:var(--mata)}
+.barra{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.abas{display:flex;gap:4px;width:100%}
+.aba{font:700 15px/1 var(--f-titulo);font-stretch:112%;background:none;border:0;border-bottom:4px solid transparent;color:var(--suave);padding:12px 16px 10px;cursor:pointer;margin-bottom:-3px}
+.aba[aria-selected=true]{color:var(--mata);border-bottom-color:var(--ocre)}
 .btn{font:700 14px/1 var(--f-texto);border:1px solid var(--linha);background:var(--papel);color:var(--tinta);border-radius:8px;padding:10px 14px;cursor:pointer}
 .btn.pri{background:var(--mata);border-color:var(--mata);color:var(--papel)}
-.btn:focus-visible,input:focus,select:focus{outline:2px solid var(--ocre);outline-offset:1px}
-input,select{font:inherit;color:var(--tinta);background:var(--papel);border:1px solid var(--linha);border-radius:8px;padding:9px 11px;min-width:0}
+.btn.perigo{color:var(--erro)}
+.btn.mini{padding:7px 10px;font-size:13px}
+.btn:focus-visible,.aba:focus-visible,input:focus,select:focus,textarea:focus{outline:2px solid var(--ocre);outline-offset:1px}
+input,select,textarea{font:inherit;color:var(--tinta);background:var(--papel);border:1px solid var(--linha);border-radius:8px;padding:9px 11px;min-width:0}
 .login{max-width:380px;margin:60px auto;background:var(--papel);border:1px solid var(--linha);border-radius:12px;padding:24px;display:grid;gap:12px}
 .login h2{font:800 22px/1.1 var(--f-titulo);font-stretch:112%;margin:0;color:var(--mata)}
 .msg{color:var(--erro);font-weight:700;font-size:14px}
@@ -35,18 +42,19 @@ input,select{font:inherit;color:var(--tinta);background:var(--papel);border:1px 
 .tile b{display:block;font:800 26px/1 var(--f-titulo);font-variant-numeric:tabular-nums;color:var(--mata)}
 .tile span{font-size:13px;color:var(--suave)}
 h2.sec{font:700 13px/1 var(--f-texto);letter-spacing:.1em;text-transform:uppercase;color:var(--mata);margin:22px 0 10px}
+h2.sec small{font-weight:400;text-transform:none;letter-spacing:0;color:var(--suave)}
 .equipes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .eq{background:var(--papel);border:1px solid var(--linha);border-radius:10px;padding:12px 14px}
 .eq h3{margin:0 0 6px;font:700 15px/1.2 var(--f-titulo);font-stretch:112%;display:flex;justify-content:space-between}
 .eq h3 em{font-style:normal;color:var(--ocre);font-variant-numeric:tabular-nums}
+.eq ul{list-style:none;margin:0;padding:0}
 .eq li{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;padding:2px 0;cursor:pointer}
-.eq li:hover{color:var(--mata)} .eq ul{list-style:none;margin:0;padding:0}
-.eq li.zero{color:var(--suave);opacity:.7}
+.eq li:hover{color:var(--mata)} .eq li.zero{color:var(--suave);opacity:.7}
 .eq li b{font-variant-numeric:tabular-nums}
 .filtros{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .filtros input{flex:1 1 200px}
 .lista{display:grid;gap:10px}
-.card{background:var(--papel);border:1px solid var(--linha);border-radius:10px;padding:14px 16px;display:grid;gap:8px}
+.card{background:var(--papel);border:1px solid var(--linha);border-radius:10px;padding:14px 16px;display:grid;gap:8px;min-width:0}
 .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
 .top strong{font-size:16.5px}
 .meta{color:var(--suave);font-size:13px}
@@ -55,20 +63,61 @@ h2.sec{font:700 13px/1 var(--f-texto);letter-spacing:.1em;text-transform:upperca
 .tag.d{background:var(--ocre-claro)}
 .obs{font-size:14px;margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
 .acoes{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.acoes a{color:var(--mata);font-weight:700;text-decoration:none}
+.acoes a,.zap{color:var(--mata);font-weight:700;text-decoration:none}
 .st{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:6px}
 .st.novo{background:var(--ocre-claro);color:var(--ocre)} .st.contatado{background:var(--mata-claro);color:var(--mata)}
 .st.escalado{background:var(--mata);color:var(--papel)}
-.vazio{text-align:center;color:var(--suave);padding:30px}
+.vazio{text-align:center;color:var(--suave);padding:30px;background:var(--papel);border:1px dashed var(--linha);border-radius:10px}
+/* Escalas */
+.nova{background:var(--papel);border:1px solid var(--linha);border-radius:12px;padding:16px;display:grid;gap:10px;grid-template-columns:repeat(4,1fr)}
+.nova label{display:grid;gap:4px;font-size:13px;font-weight:700;min-width:0}
+.nova .larga{grid-column:span 2}
+.nova .toda{grid-column:1/-1}
+.nova h3{grid-column:1/-1;margin:0;font:700 17px/1.2 var(--f-titulo);font-stretch:112%;color:var(--mata)}
+@media (max-width:720px){.nova{grid-template-columns:1fr 1fr}.nova .larga{grid-column:1/-1}}
+.periodo{display:flex;gap:6px;margin:18px 0 10px}
+.periodo button[aria-pressed=true]{background:var(--mata);color:var(--papel);border-color:var(--mata)}
+.escala{background:var(--papel);border:1px solid var(--linha);border-radius:12px;overflow:hidden}
+.esc-top{display:flex;gap:14px;padding:14px 16px;align-items:center;border-bottom:1px solid var(--linha)}
+.calend{flex:none;width:64px;text-align:center;border-radius:10px;background:var(--mata);color:var(--papel);padding:8px 0 9px}
+.calend small{display:block;font:700 11px/1 var(--f-texto);letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.calend b{display:block;font:800 26px/1.05 var(--f-titulo);font-variant-numeric:tabular-nums}
+.esc-top .info{min-width:0;flex:1}
+.esc-top h3{margin:0;font:700 18px/1.2 var(--f-titulo);font-stretch:112%;overflow-wrap:anywhere}
+.cont{font:700 13px/1 var(--f-texto);color:var(--ocre);white-space:nowrap}
+.passada .calend{background:var(--suave)}
+.pessoas{list-style:none;margin:0;padding:6px 16px}
+.pessoa{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:10px 0;border-bottom:1px dashed var(--linha);align-items:center}
+.pessoa:last-child{border-bottom:0}
+.pessoa .nome{font-weight:700;min-width:0;overflow-wrap:anywhere}
+.pessoa .nome small{font-weight:400;color:var(--suave);display:block}
+.pessoa .ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.pres{font-size:13px;padding:6px 8px}
+.pres.confirmado{border-color:var(--mata);color:var(--mata);font-weight:700}
+.pres.presente{background:var(--mata);color:var(--papel);border-color:var(--mata);font-weight:700}
+.pres.faltou{border-color:var(--erro);color:var(--erro);font-weight:700}
+.x{background:none;border:0;color:var(--suave);font-size:20px;line-height:1;cursor:pointer;padding:4px 6px}
+.x:hover{color:var(--erro)}
+.add{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;background:var(--chao);border-top:1px solid var(--linha)}
+.add select{flex:1 1 200px}
+.esc-acoes{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--linha);justify-content:space-between}
+.aviso{font-size:13px;color:var(--erro);font-weight:700;padding:0 16px 10px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tinta);color:var(--chao);
+  padding:12px 18px;border-radius:10px;font-weight:700;z-index:20;max-width:calc(100% - 32px)}
+@media (max-width:560px){.pessoa{grid-template-columns:1fr}.pessoa .ctl{justify-content:flex-start}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div><div class="kicker">AD Companheirismo · Obra do Sítio</div><h1>Painel de Talentos</h1></div>
-    <div id="barra" hidden style="display:flex;gap:8px;flex-wrap:wrap">
+    <div class="barra" id="barra" hidden>
       <button class="btn" id="csv">Baixar planilha (CSV)</button>
       <button class="btn" id="sair">Sair</button>
+    </div>
+    <div class="abas" id="abas" role="tablist" hidden>
+      <button class="aba" role="tab" aria-selected="true" data-aba="voluntarios">Voluntários</button>
+      <button class="aba" role="tab" aria-selected="false" data-aba="escalas">Escalas</button>
     </div>
   </header>
 
@@ -80,9 +129,10 @@ h2.sec{font:700 13px/1 var(--f-texto);letter-spacing:.1em;text-transform:upperca
     <button class="btn pri" type="submit">Entrar</button>
   </form>
 
-  <main id="app" hidden>
+  <!-- ===== ABA VOLUNTÁRIOS ===== -->
+  <main id="voluntarios" hidden>
     <div class="resumo" id="resumo"></div>
-    <h2 class="sec">Por equipe <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--suave)">— toque numa função para filtrar</span></h2>
+    <h2 class="sec">Por equipe <small>— toque numa função para filtrar</small></h2>
     <div class="equipes" id="equipes"></div>
     <h2 class="sec">Voluntários</h2>
     <div class="filtros">
@@ -93,13 +143,32 @@ h2.sec{font:700 13px/1 var(--f-texto);letter-spacing:.1em;text-transform:upperca
     </div>
     <div class="lista" id="lista"></div>
   </main>
+
+  <!-- ===== ABA ESCALAS ===== -->
+  <main id="escalas" hidden>
+    <form class="nova" id="nova">
+      <h3>Nova escala</h3>
+      <label>Data<input type="date" id="eData" required></label>
+      <label>Horário<input type="text" id="eHora" maxlength="60" placeholder="7h às 16h"></label>
+      <label class="larga">Frente de trabalho<input type="text" id="eTitulo" maxlength="120" required placeholder="Ex.: Fundação do salão, Limpeza do terreno"></label>
+      <label class="larga">Local<input type="text" id="eLocal" maxlength="120" value="Sítio da igreja"></label>
+      <label class="larga">Observações<input type="text" id="eObs" maxlength="1000" placeholder="Ex.: levar EPI, almoço no local"></label>
+      <div class="toda"><button class="btn pri" type="submit">Criar escala</button></div>
+    </form>
+    <div class="periodo">
+      <button class="btn mini" id="pProx" aria-pressed="true">Próximas</button>
+      <button class="btn mini" id="pPass" aria-pressed="false">Anteriores</button>
+    </div>
+    <div class="lista" id="listaEsc"></div>
+  </main>
 </div>
+<div class="toast" id="toast" role="status" hidden></div>
 
 <script>
-/* ===== CONFIGURAÇÃO: mesmas 2 linhas do formulário ===== */
+/* ===== CONFIGURAÇÃO ===== */
 const SUPABASE_URL = "https://efjmfhoteefwhagrehrz.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Rsjt7VB3w-mNHc4Ynm3gcw_rGLL9leg";
-/* ======================================================= */
+/* ======================== */
 
 const EQUIPES = [
   ["Planejamento e projetos", ["Topógrafo","Arquiteto / Urbanista","Engenheiro civil estrutural","Engenheiro geotécnico","Projetista de instalações (elétrica/hidráulica)"]],
@@ -113,98 +182,101 @@ const EQUIPES = [
   ["Mobilização", ["Liderança de departamento","Comunicação / fotografia / vídeo"]],
   ["Intercessão", ["Círculo de oração / intercessor(a)"]],
 ];
+const FUNCOES = EQUIPES.flatMap(e => e[1]);
 const DISP = ["Sábados","Domingos","Durante a semana","Feriados","Uma vez por mês","Conforme minha possibilidade"];
 
 const $ = id => document.getElementById(id);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let dados = [];
+let dados = [], escalas = [], periodo = "prox", escalasOk = true;
 
-EQUIPES.flatMap(e => e[1]).forEach(h => $("fHab").add(new Option(h, h)));
+function toast(t){ const e = $("toast"); e.textContent = t; e.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => e.hidden = true, 2600); }
+function falhou(error, t){ if (error) { console.error(error); toast(t || "Não foi possível salvar. Tente de novo."); return true; } return false; }
+
+FUNCOES.forEach(h => $("fHab").add(new Option(h, h)));
 DISP.forEach(d => $("fDisp").add(new Option(d, d)));
 
+/* ---------- Login ---------- */
 $("login").addEventListener("submit", async e => {
   e.preventDefault(); $("lmsg").textContent = "";
-  const { error } = await sb.auth.signInWithPassword({ email: $("email").value, password: $("senha").value });
-  if (error) $("lmsg").textContent = "E-mail ou senha incorretos.";
-  else iniciar();
+  const { error } = await sb.auth.signInWithPassword({ email: $("email").value.trim(), password: $("senha").value });
+  if (error) $("lmsg").textContent = "E-mail ou senha incorretos."; else iniciar();
 });
 $("sair").onclick = async () => { await sb.auth.signOut(); location.reload(); };
 
 async function iniciar(){
-  $("login").hidden = true; $("app").hidden = false; $("barra").hidden = false;
-  const { data, error } = await sb.from("talentos").select("*").order("criado_em", { ascending: false });
-  if (error) { $("lista").innerHTML = '<div class="vazio">Não foi possível carregar os cadastros.</div>'; return; }
-  dados = data; resumo(); render();
+  $("login").hidden = true; $("barra").hidden = false; $("abas").hidden = false; mostrarAba(location.hash === "#escalas" ? "escalas" : "voluntarios");
+  const [t, e] = await Promise.all([
+    sb.from("talentos").select("*").order("criado_em", { ascending: false }),
+    sb.from("escalas").select("*, escala_voluntarios(*)").order("data", { ascending: true })
+  ]);
+  if (t.error) { $("lista").replaceChildren(el("div", "vazio", "Não foi possível carregar os cadastros.")); return; }
+  dados = t.data;
+  if (e.error) { console.error(e.error); escalasOk = false; }
+  else escalas = e.data;
+  resumo(); render(); renderEscalas();
 }
 sb.auth.getSession().then(({ data }) => { if (data.session) iniciar(); });
 
-function conta(h){ return dados.filter(d => (d.habilidades||[]).includes(h)).length; }
+/* ---------- Abas ---------- */
+function mostrarAba(nome){
+  document.querySelectorAll(".aba").forEach(b => b.setAttribute("aria-selected", b.dataset.aba === nome));
+  $("voluntarios").hidden = nome !== "voluntarios"; $("escalas").hidden = nome !== "escalas";
+  $("csv").hidden = nome !== "voluntarios";
+  history.replaceState(null, "", "#" + nome);
+}
+document.querySelectorAll(".aba").forEach(b => b.onclick = () => mostrarAba(b.dataset.aba));
+
+/* ---------- Voluntários ---------- */
+const conta = h => dados.filter(d => (d.habilidades||[]).includes(h)).length;
 function resumo(){
   const presencial = dados.filter(d => (d.participacao||[]).includes("Trabalho presencial")).length;
   const sab = dados.filter(d => (d.disponibilidade||[]).includes("Sábados")).length;
   const novos = dados.filter(d => d.status === "novo").length;
-  $("resumo").innerHTML = "";
-  [[dados.length,"cadastros"],[presencial,"trabalho presencial"],[sab,"disponíveis aos sábados"],[novos,"aguardando contato"]].forEach(([n,t]) => {
-    const el = document.createElement("div"); el.className = "tile";
-    el.innerHTML = `<b>${n}</b><span>${t}</span>`; $("resumo").append(el);
-  });
-  $("equipes").innerHTML = "";
-  EQUIPES.forEach(([nome, itens]) => {
+  $("resumo").replaceChildren(...[[dados.length,"cadastros"],[presencial,"trabalho presencial"],[sab,"disponíveis aos sábados"],[novos,"aguardando contato"]].map(([n,t]) => {
+    const e = el("div", "tile"); e.append(el("b", null, n), el("span", null, t)); return e; }));
+  $("equipes").replaceChildren(...EQUIPES.map(([nome, itens]) => {
     const total = dados.filter(d => itens.some(i => (d.habilidades||[]).includes(i))).length;
-    const box = document.createElement("div"); box.className = "eq";
-    const h = document.createElement("h3"); h.innerHTML = `<span></span><em>${total}</em>`; h.firstChild.textContent = nome;
-    const ul = document.createElement("ul");
-    itens.forEach(i => {
-      const c = conta(i), li = document.createElement("li"); if (!c) li.className = "zero";
-      li.innerHTML = "<span></span><b></b>"; li.firstChild.textContent = i; li.lastChild.textContent = c || "—";
-      li.onclick = () => { $("fHab").value = i; render(); $("busca").scrollIntoView({behavior:"smooth"}); };
-      ul.append(li);
-    });
-    box.append(h, ul); $("equipes").append(box);
-  });
+    const box = el("div", "eq"), h = el("h3"); h.append(el("span", null, nome), el("em", null, total));
+    const ul = el("ul");
+    itens.forEach(i => { const c = conta(i), li = el("li", c ? "" : "zero"); li.append(el("span", null, i), el("b", null, c || "—"));
+      li.onclick = () => { $("fHab").value = i; render(); $("busca").scrollIntoView({behavior:"smooth"}); }; ul.append(li); });
+    box.append(h, ul); return box;
+  }));
 }
-
 function filtrados(){
   const q = $("busca").value.toLowerCase().trim(), h = $("fHab").value, d = $("fDisp").value, s = $("fSt").value;
-  return dados.filter(r =>
-    (!h || (r.habilidades||[]).includes(h)) && (!d || (r.disponibilidade||[]).includes(d)) && (!s || r.status === s) &&
+  return dados.filter(r => (!h || (r.habilidades||[]).includes(h)) && (!d || (r.disponibilidade||[]).includes(d)) && (!s || r.status === s) &&
     (!q || [r.nome, r.whatsapp, r.observacoes, r.outras_habilidades, r.congregacao].join(" ").toLowerCase().includes(q)));
 }
-
-function tags(arr, cls){ const w = document.createElement("div"); w.className = "tags";
-  (arr||[]).forEach(t => { const s = document.createElement("span"); s.className = "tag " + (cls||""); s.textContent = t; w.append(s); }); return w; }
+function tags(arr, cls){ const w = el("div", "tags"); (arr||[]).forEach(t => w.append(el("span", "tag " + (cls||""), t))); return w; }
+const numZap = w => { const n = (w||"").replace(/\D/g, ""); return n.length <= 11 ? "55" + n : n; };
 
 function render(){
-  const lista = $("lista"); lista.innerHTML = "";
   const rows = filtrados();
-  if (!rows.length) { lista.innerHTML = '<div class="vazio">Nenhum cadastro encontrado com esses filtros.</div>'; return; }
-  rows.forEach(r => {
-    const c = document.createElement("article"); c.className = "card";
-    const top = document.createElement("div"); top.className = "top";
-    const n = document.createElement("strong"); n.textContent = r.nome;
-    const m = document.createElement("span"); m.className = "meta";
-    m.textContent = [r.congregacao, r.tempo_experiencia, r.turno, new Date(r.criado_em).toLocaleDateString("pt-BR")].filter(Boolean).join(" · ");
-    top.append(n, m); c.append(top);
+  if (!rows.length) { $("lista").replaceChildren(el("div", "vazio", dados.length ? "Nenhum cadastro encontrado com esses filtros." : "Nenhum cadastro ainda. Compartilhe o link do formulário com a igreja.")); return; }
+  $("lista").replaceChildren(...rows.map(r => {
+    const c = el("article", "card"), top = el("div", "top");
+    top.append(el("strong", null, r.nome), el("span", "meta", [r.congregacao, r.tempo_experiencia, r.turno, new Date(r.criado_em).toLocaleDateString("pt-BR")].filter(Boolean).join(" · ")));
+    c.append(top);
     const habs = [...(r.habilidades||[])]; if (r.outras_habilidades) habs.push(r.outras_habilidades);
     c.append(tags(habs), tags([...(r.disponibilidade||[]), ...(r.participacao||[])], "d"));
     const extra = [r.tem_ferramentas === true ? "Tem ferramentas" : r.tem_ferramentas === false ? "Sem ferramentas" : "",
       r.registro && "Registro: " + r.registro, r.tem_veiculo && "Veículo: " + r.tem_veiculo].filter(Boolean).join(" · ");
-    if (extra) { const e = document.createElement("div"); e.className = "meta"; e.textContent = extra; c.append(e); }
-    if (r.observacoes) { const o = document.createElement("p"); o.className = "obs"; o.textContent = r.observacoes; c.append(o); }
-    const ac = document.createElement("div"); ac.className = "acoes";
-    const num = r.whatsapp.replace(/\D/g, ""); const a = document.createElement("a");
-    a.href = "https://wa.me/" + (num.length <= 11 ? "55" + num : num); a.target = "_blank"; a.rel = "noopener";
-    a.textContent = "WhatsApp " + r.whatsapp;
-    const st = document.createElement("span"); st.className = "st " + r.status; st.textContent = r.status;
-    const sel = document.createElement("select"); ["novo","contatado","escalado"].forEach(v => sel.add(new Option("Marcar: " + v, v)));
-    sel.value = r.status;
-    sel.onchange = async () => {
-      const { error } = await sb.from("talentos").update({ status: sel.value }).eq("id", r.id);
-      if (error) { sel.value = r.status; return; }
-      r.status = sel.value; resumo(); render();
-    };
-    ac.append(a, st, sel); c.append(ac); lista.append(c);
-  });
+    if (extra) c.append(el("div", "meta", extra));
+    if (r.observacoes) c.append(el("p", "obs", r.observacoes));
+    const ac = el("div", "acoes");
+    const a = el("a", null, "WhatsApp " + r.whatsapp); a.href = "https://wa.me/" + numZap(r.whatsapp); a.target = "_blank"; a.rel = "noopener";
+    const sel = el("select"); ["novo","contatado","escalado"].forEach(v => sel.add(new Option("Status: " + v, v))); sel.value = r.status;
+    sel.onchange = async () => { const { error } = await sb.from("talentos").update({ status: sel.value }).eq("id", r.id);
+      if (falhou(error)) { sel.value = r.status; return; } r.status = sel.value; resumo(); render(); };
+    const del = el("button", "btn mini perigo", "Excluir");
+    del.onclick = async () => { if (!confirm("Excluir o cadastro de " + r.nome + "? Ele também sai das escalas.")) return;
+      const { error } = await sb.from("talentos").delete().eq("id", r.id); if (falhou(error, "Não foi possível excluir. Rode o arquivo 2-escalas.sql.")) return;
+      dados = dados.filter(x => x.id !== r.id); escalas.forEach(s => s.escala_voluntarios = s.escala_voluntarios.filter(v => v.talento_id !== r.id));
+      resumo(); render(); renderEscalas(); toast("Cadastro excluído."); };
+    ac.append(a, el("span", "st " + r.status, r.status), sel, del); c.append(ac); return c;
+  }));
 }
 ["busca","fHab","fDisp","fSt"].forEach(id => $(id).addEventListener("input", render));
 
@@ -215,6 +287,128 @@ $("csv").onclick = () => {
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
   a.download = "talentos-obra-sitio.csv"; a.click();
 };
+
+/* ---------- Escalas ---------- */
+const DIAS = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+const dt = s => new Date(s + "T12:00:00");
+const hojeISO = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0,10); };
+const extenso = s => dt(s).toLocaleDateString("pt-BR", { weekday:"long", day:"numeric", month:"long" });
+function dispNoDia(t, data){
+  const d = t.disponibilidade || [], w = dt(data).getDay();
+  if (w === 6 && d.includes("Sábados")) return "aos sábados";
+  if (w === 0 && d.includes("Domingos")) return "aos domingos";
+  if (w > 0 && w < 6 && d.includes("Durante a semana")) return "durante a semana";
+  return "";
+}
+const pessoa = id => dados.find(d => d.id === id);
+const primeiro = n => (n || "").split(" ")[0];
+
+$("eData").value = (() => { const d = dt(hojeISO()); d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7)); return d.toISOString().slice(0,10); })();
+$("nova").addEventListener("submit", async e => {
+  e.preventDefault();
+  const linha = { data: $("eData").value, titulo: $("eTitulo").value.trim(), horario: $("eHora").value.trim() || null,
+    local: $("eLocal").value.trim() || null, observacoes: $("eObs").value.trim() || null };
+  if (!linha.data || linha.titulo.length < 2) return toast("Preencha a data e a frente de trabalho.");
+  const { data, error } = await sb.from("escalas").insert(linha).select("*, escala_voluntarios(*)").single();
+  if (falhou(error, "Não foi possível criar. Verifique se rodou o 2-escalas.sql.")) return;
+  escalas.push(data); escalas.sort((a,b) => a.data.localeCompare(b.data));
+  $("eTitulo").value = ""; $("eObs").value = ""; periodo = linha.data >= hojeISO() ? "prox" : "pass"; renderEscalas(); toast("Escala criada.");
+});
+$("pProx").onclick = () => { periodo = "prox"; renderEscalas(); };
+$("pPass").onclick = () => { periodo = "pass"; renderEscalas(); };
+
+function msgPessoa(s, v){
+  const t = pessoa(v.talento_id);
+  return `Paz do Senhor, ${primeiro(t?.nome)}! Você foi escalado(a) para a obra do sítio da AD Companheirismo.\n\n` +
+    `Dia: ${extenso(s.data)}\n` + (s.horario ? `Horário: ${s.horario}\n` : "") + (s.local ? `Local: ${s.local}\n` : "") +
+    `Frente: ${s.titulo}\n` + (v.funcao ? `Sua função: ${v.funcao}\n` : "") + (s.observacoes ? `Obs.: ${s.observacoes}\n` : "") +
+    `\nPode confirmar sua presença? Deus abençoe!`;
+}
+function msgGrupo(s){
+  const linhas = s.escala_voluntarios.map(v => `• ${pessoa(v.talento_id)?.nome || "?"}${v.funcao ? " — " + v.funcao : ""}`);
+  return `*Escala da obra do sítio*\n*${extenso(s.data)}*\n${s.titulo}` + (s.horario ? ` · ${s.horario}` : "") + (s.local ? `\n${s.local}` : "") +
+    `\n\n${linhas.join("\n") || "(ninguém escalado ainda)"}` + (s.observacoes ? `\n\nObs.: ${s.observacoes}` : "") + `\n\nDeus abençoe a todos!`;
+}
+async function copiar(t){
+  try { await navigator.clipboard.writeText(t); toast("Mensagem copiada. Cole no WhatsApp."); }
+  catch { window.prompt("Copie a mensagem:", t); }
+}
+
+function renderEscalas(){
+  if (!escalasOk) { $("listaEsc").replaceChildren(el("div", "vazio", "As escalas ainda não foram ativadas no banco. Rode o arquivo 2-escalas.sql no Supabase.")); return; }
+  $("pProx").setAttribute("aria-pressed", periodo === "prox"); $("pPass").setAttribute("aria-pressed", periodo === "pass");
+  const hoje = hojeISO();
+  let lista = escalas.filter(s => periodo === "prox" ? s.data >= hoje : s.data < hoje);
+  if (periodo === "pass") lista = [...lista].reverse();
+  if (!lista.length) { $("listaEsc").replaceChildren(el("div", "vazio", periodo === "prox" ? "Nenhuma escala marcada. Crie a primeira no quadro acima." : "Nenhuma escala anterior.")); return; }
+  $("listaEsc").replaceChildren(...lista.map(cardEscala));
+}
+
+function cardEscala(s){
+  const d = dt(s.data), box = el("article", "escala" + (s.data < hojeISO() ? " passada" : ""));
+  const top = el("div", "esc-top"), cal = el("div", "calend");
+  cal.append(el("small", null, DIAS[d.getDay()]), el("b", null, d.getDate()), el("small", null, d.toLocaleDateString("pt-BR", { month:"short" }).replace(".", "")));
+  const info = el("div", "info"); info.append(el("h3", null, s.titulo),
+    el("div", "meta", [s.horario, s.local, s.observacoes].filter(Boolean).join(" · ")));
+  top.append(cal, info, el("span", "cont", s.escala_voluntarios.length + (s.escala_voluntarios.length === 1 ? " pessoa" : " pessoas")));
+  box.append(top);
+
+  // Escalados
+  const ul = el("ul", "pessoas");
+  s.escala_voluntarios.forEach(v => {
+    const t = pessoa(v.talento_id), li = el("li", "pessoa");
+    const nome = el("div", "nome", t?.nome || "Cadastro removido"); nome.append(el("small", null, v.funcao || "Sem função definida"));
+    const ctl = el("div", "ctl");
+    if (t) { const z = el("a", "zap btn mini", "Avisar no WhatsApp");
+      z.href = "https://wa.me/" + numZap(t.whatsapp) + "?text=" + encodeURIComponent(msgPessoa(s, v)); z.target = "_blank"; z.rel = "noopener"; ctl.append(z); }
+    const p = el("select", "pres " + v.presenca);
+    [["pendente","Aguardando"],["confirmado","Confirmou"],["presente","Compareceu"],["faltou","Faltou"]].forEach(([val, txt]) => p.add(new Option(txt, val)));
+    p.value = v.presenca;
+    p.onchange = async () => { const { error } = await sb.from("escala_voluntarios").update({ presenca: p.value }).eq("id", v.id);
+      if (falhou(error)) { p.value = v.presenca; return; } v.presenca = p.value; p.className = "pres " + v.presenca; };
+    const x = el("button", "x", "×"); x.title = "Tirar da escala"; x.setAttribute("aria-label", "Tirar " + (t?.nome || "") + " da escala");
+    x.onclick = async () => { const { error } = await sb.from("escala_voluntarios").delete().eq("id", v.id); if (falhou(error)) return;
+      s.escala_voluntarios = s.escala_voluntarios.filter(z => z.id !== v.id); renderEscalas(); };
+    ctl.append(p, x); li.append(nome, ctl); ul.append(li);
+  });
+  if (s.escala_voluntarios.length) box.append(ul);
+
+  // Adicionar pessoa
+  const add = el("div", "add"), fSel = el("select"), pSel = el("select"), bt = el("button", "btn pri mini", "Escalar");
+  fSel.add(new Option("Função…", "")); EQUIPES.forEach(([eq, itens]) => { const g = document.createElement("optgroup"); g.label = eq; itens.forEach(i => g.append(new Option(i, i))); fSel.append(g); });
+  fSel.add(new Option("Apoio geral", "Apoio geral"));
+  const montarPessoas = () => {
+    pSel.replaceChildren(new Option("Escolha o voluntário…", ""));
+    const ja = new Set(s.escala_voluntarios.map(v => v.talento_id)), f = fSel.value;
+    const outrasNoDia = new Set(escalas.filter(o => o.data === s.data && o.id !== s.id).flatMap(o => o.escala_voluntarios.map(v => v.talento_id)));
+    const cands = dados.filter(t => !ja.has(t.id)).map(t => ({ t, tem: f && (t.habilidades||[]).includes(f), disp: dispNoDia(t, s.data) }))
+      .sort((a,b) => (b.tem - a.tem) || (!!b.disp - !!a.disp) || a.t.nome.localeCompare(b.t.nome));
+    const grupos = [[f ? "Têm essa função" : null, cands.filter(c => c.tem)], [f ? "Demais voluntários" : "Voluntários", cands.filter(c => !c.tem)]];
+    grupos.forEach(([rot, arr]) => { if (!arr.length || !rot) return; const g = document.createElement("optgroup"); g.label = rot;
+      arr.forEach(c => g.append(new Option(c.t.nome + (c.disp ? " · disponível " + c.disp : "") + (outrasNoDia.has(c.t.id) ? " · já escalado neste dia" : ""), c.t.id)));
+      pSel.append(g); });
+  };
+  fSel.onchange = montarPessoas; montarPessoas();
+  bt.onclick = async () => {
+    if (!pSel.value) return toast("Escolha um voluntário.");
+    const linha = { escala_id: s.id, talento_id: pSel.value, funcao: fSel.value || null };
+    const { data, error } = await sb.from("escala_voluntarios").insert(linha).select().single(); if (falhou(error)) return;
+    s.escala_voluntarios.push(data);
+    const t = pessoa(data.talento_id);
+    if (t && t.status !== "escalado") { const r = await sb.from("talentos").update({ status: "escalado" }).eq("id", t.id); if (!r.error) t.status = "escalado"; resumo(); render(); }
+    renderEscalas(); toast((t ? primeiro(t.nome) : "Voluntário") + " foi escalado.");
+  };
+  add.append(fSel, pSel, bt); box.append(add);
+
+  // Ações da escala
+  const ac = el("div", "esc-acoes"), cp = el("button", "btn mini", "Copiar lista para o grupo"), del = el("button", "btn mini perigo", "Excluir escala");
+  cp.onclick = () => copiar(msgGrupo(s));
+  del.onclick = async () => { if (!confirm("Excluir a escala de " + extenso(s.data) + "?")) return;
+    const { error } = await sb.from("escalas").delete().eq("id", s.id); if (falhou(error)) return;
+    escalas = escalas.filter(z => z.id !== s.id); renderEscalas(); toast("Escala excluída."); };
+  ac.append(cp, del); box.append(ac);
+  return box;
+}
 </script>
 </body>
 </html>
