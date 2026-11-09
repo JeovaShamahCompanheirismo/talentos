@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Painel de Talentos — AD Companheirismo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800&family=Nunito+Sans:wght@400;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{
+  --chao:#F3F1EA; --papel:#FFFFFF; --tinta:#1F2A22; --suave:#5C6A5F; --linha:#D9DDD3;
+  --mata:#2F5D3A; --mata-claro:#E3EDE2; --ocre:#C98A1B; --ocre-claro:#F8EBD0; --erro:#B3261E;
+  --f-titulo:"Archivo",system-ui,sans-serif; --f-texto:"Nunito Sans",system-ui,sans-serif; color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --chao:#121713; --papel:#1A211C; --tinta:#E8ECE6; --suave:#A3AEA5; --linha:#2E3830;
+  --mata:#7FBF8C; --mata-claro:#223127; --ocre:#E3A93F; --ocre-claro:#3A2F18; --erro:#F2B8B5; color-scheme:dark;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--chao);color:var(--tinta);font:15px/1.5 var(--f-texto);
+  padding:env(safe-area-inset-top,0) max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+.wrap{max-width:1100px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;padding:24px 0 16px;border-bottom:3px solid var(--mata);margin-bottom:20px}
+.kicker{font:700 12px/1 var(--f-texto);letter-spacing:.12em;text-transform:uppercase;color:var(--ocre)}
+h1{font:800 30px/1.1 var(--f-titulo);font-stretch:112%;margin:8px 0 0;color:var(--mata)}
+.btn{font:700 14px/1 var(--f-texto);border:1px solid var(--linha);background:var(--papel);color:var(--tinta);border-radius:8px;padding:10px 14px;cursor:pointer}
+.btn.pri{background:var(--mata);border-color:var(--mata);color:var(--papel)}
+.btn:focus-visible,input:focus,select:focus{outline:2px solid var(--ocre);outline-offset:1px}
+input,select{font:inherit;color:var(--tinta);background:var(--papel);border:1px solid var(--linha);border-radius:8px;padding:9px 11px;min-width:0}
+.login{max-width:380px;margin:60px auto;background:var(--papel);border:1px solid var(--linha);border-radius:12px;padding:24px;display:grid;gap:12px}
+.login h2{font:800 22px/1.1 var(--f-titulo);font-stretch:112%;margin:0;color:var(--mata)}
+.msg{color:var(--erro);font-weight:700;font-size:14px}
+.resumo{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.tile{background:var(--papel);border:1px solid var(--linha);border-radius:10px;padding:12px 14px}
+.tile b{display:block;font:800 26px/1 var(--f-titulo);font-variant-numeric:tabular-nums;color:var(--mata)}
+.tile span{font-size:13px;color:var(--suave)}
+h2.sec{font:700 13px/1 var(--f-texto);letter-spacing:.1em;text-transform:uppercase;color:var(--mata);margin:22px 0 10px}
+.equipes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.eq{background:var(--papel);border:1px solid var(--linha);border-radius:10px;padding:12px 14px}
+.eq h3{margin:0 0 6px;font:700 15px/1.2 var(--f-titulo);font-stretch:112%;display:flex;justify-content:space-between}
+.eq h3 em{font-style:normal;color:var(--ocre);font-variant-numeric:tabular-nums}
+.eq li{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;padding:2px 0;cursor:pointer}
+.eq li:hover{color:var(--mata)} .eq ul{list-style:none;margin:0;padding:0}
+.eq li.zero{color:var(--suave);opacity:.7}
+.eq li b{font-variant-numeric:tabular-nums}
+.filtros{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.filtros input{flex:1 1 200px}
+.lista{display:grid;gap:10px}
+.card{background:var(--papel);border:1px solid var(--linha);border-radius:10px;padding:14px 16px;display:grid;gap:8px}
+.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.top strong{font-size:16.5px}
+.meta{color:var(--suave);font-size:13px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12.5px;padding:3px 9px;border-radius:999px;background:var(--mata-claro);color:var(--tinta)}
+.tag.d{background:var(--ocre-claro)}
+.obs{font-size:14px;margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.acoes{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.acoes a{color:var(--mata);font-weight:700;text-decoration:none}
+.st{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:6px}
+.st.novo{background:var(--ocre-claro);color:var(--ocre)} .st.contatado{background:var(--mata-claro);color:var(--mata)}
+.st.escalado{background:var(--mata);color:var(--papel)}
+.vazio{text-align:center;color:var(--suave);padding:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div><div class="kicker">AD Companheirismo · Obra do Sítio</div><h1>Painel de Talentos</h1></div>
+    <div id="barra" hidden style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="csv">Baixar planilha (CSV)</button>
+      <button class="btn" id="sair">Sair</button>
+    </div>
+  </header>
+
+  <form class="login" id="login">
+    <h2>Acesso da liderança</h2>
+    <input type="email" id="email" placeholder="E-mail" autocomplete="username" required>
+    <input type="password" id="senha" placeholder="Senha" autocomplete="current-password" required>
+    <div class="msg" id="lmsg"></div>
+    <button class="btn pri" type="submit">Entrar</button>
+  </form>
+
+  <main id="app" hidden>
+    <div class="resumo" id="resumo"></div>
+    <h2 class="sec">Por equipe <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--suave)">— toque numa função para filtrar</span></h2>
+    <div class="equipes" id="equipes"></div>
+    <h2 class="sec">Voluntários</h2>
+    <div class="filtros">
+      <input type="search" id="busca" placeholder="Buscar nome, telefone ou observação">
+      <select id="fHab"><option value="">Todas as funções</option></select>
+      <select id="fDisp"><option value="">Qualquer disponibilidade</option></select>
+      <select id="fSt"><option value="">Todos os status</option><option>novo</option><option>contatado</option><option>escalado</option></select>
+    </div>
+    <div class="lista" id="lista"></div>
+  </main>
+</div>
+
+<script>
+/* ===== CONFIGURAÇÃO: mesmas 2 linhas do formulário ===== */
+const SUPABASE_URL = "https://efjmfhoteefwhagrehrz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Rsjt7VB3w-mNHc4Ynm3gcw_rGLL9leg";
+/* ======================================================= */
+
+const EQUIPES = [
+  ["Planejamento e projetos", ["Topógrafo","Arquiteto / Urbanista","Engenheiro civil estrutural","Engenheiro geotécnico","Projetista de instalações (elétrica/hidráulica)"]],
+  ["Construção civil", ["Mestre de obras","Contramestre","Pedreiro","Meio-oficial","Servente com experiência","Servente sem experiência","Ferreiro / armador","Operador de máquinas pesadas (linha amarela)"]],
+  ["Instalações", ["Eletricista instalador","Encanador / bombeiro hidráulico"]],
+  ["Cobertura e estrutura", ["Telhadista","Carpinteiro de estrutura"]],
+  ["Acabamento", ["Pintor","Marceneiro","Gesseiro","Azulejista / assentador de piso"]],
+  ["Alimentação", ["Cozinheiro(a)","Auxiliar de cozinha","Equipe de apoio (servir, limpeza)"]],
+  ["Transporte", ["Motorista categoria D","Motorista (outras categorias)"]],
+  ["Administração", ["Compras / orçamentos","Secretaria / controle"]],
+  ["Mobilização", ["Liderança de departamento","Comunicação / fotografia / vídeo"]],
+  ["Intercessão", ["Círculo de oração / intercessor(a)"]],
+];
+const DISP = ["Sábados","Domingos","Durante a semana","Feriados","Uma vez por mês","Conforme minha possibilidade"];
+
+const $ = id => document.getElementById(id);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let dados = [];
+
+EQUIPES.flatMap(e => e[1]).forEach(h => $("fHab").add(new Option(h, h)));
+DISP.forEach(d => $("fDisp").add(new Option(d, d)));
+
+$("login").addEventListener("submit", async e => {
+  e.preventDefault(); $("lmsg").textContent = "";
+  const { error } = await sb.auth.signInWithPassword({ email: $("email").value, password: $("senha").value });
+  if (error) $("lmsg").textContent = "E-mail ou senha incorretos.";
+  else iniciar();
+});
+$("sair").onclick = async () => { await sb.auth.signOut(); location.reload(); };
+
+async function iniciar(){
+  $("login").hidden = true; $("app").hidden = false; $("barra").hidden = false;
+  const { data, error } = await sb.from("talentos").select("*").order("criado_em", { ascending: false });
+  if (error) { $("lista").innerHTML = '<div class="vazio">Não foi possível carregar os cadastros.</div>'; return; }
+  dados = data; resumo(); render();
+}
+sb.auth.getSession().then(({ data }) => { if (data.session) iniciar(); });
+
+function conta(h){ return dados.filter(d => (d.habilidades||[]).includes(h)).length; }
+function resumo(){
+  const presencial = dados.filter(d => (d.participacao||[]).includes("Trabalho presencial")).length;
+  const sab = dados.filter(d => (d.disponibilidade||[]).includes("Sábados")).length;
+  const novos = dados.filter(d => d.status === "novo").length;
+  $("resumo").innerHTML = "";
+  [[dados.length,"cadastros"],[presencial,"trabalho presencial"],[sab,"disponíveis aos sábados"],[novos,"aguardando contato"]].forEach(([n,t]) => {
+    const el = document.createElement("div"); el.className = "tile";
+    el.innerHTML = `<b>${n}</b><span>${t}</span>`; $("resumo").append(el);
+  });
+  $("equipes").innerHTML = "";
+  EQUIPES.forEach(([nome, itens]) => {
+    const total = dados.filter(d => itens.some(i => (d.habilidades||[]).includes(i))).length;
+    const box = document.createElement("div"); box.className = "eq";
+    const h = document.createElement("h3"); h.innerHTML = `<span></span><em>${total}</em>`; h.firstChild.textContent = nome;
+    const ul = document.createElement("ul");
+    itens.forEach(i => {
+      const c = conta(i), li = document.createElement("li"); if (!c) li.className = "zero";
+      li.innerHTML = "<span></span><b></b>"; li.firstChild.textContent = i; li.lastChild.textContent = c || "—";
+      li.onclick = () => { $("fHab").value = i; render(); $("busca").scrollIntoView({behavior:"smooth"}); };
+      ul.append(li);
+    });
+    box.append(h, ul); $("equipes").append(box);
+  });
+}
+
+function filtrados(){
+  const q = $("busca").value.toLowerCase().trim(), h = $("fHab").value, d = $("fDisp").value, s = $("fSt").value;
+  return dados.filter(r =>
+    (!h || (r.habilidades||[]).includes(h)) && (!d || (r.disponibilidade||[]).includes(d)) && (!s || r.status === s) &&
+    (!q || [r.nome, r.whatsapp, r.observacoes, r.outras_habilidades, r.congregacao].join(" ").toLowerCase().includes(q)));
+}
+
+function tags(arr, cls){ const w = document.createElement("div"); w.className = "tags";
+  (arr||[]).forEach(t => { const s = document.createElement("span"); s.className = "tag " + (cls||""); s.textContent = t; w.append(s); }); return w; }
+
+function render(){
+  const lista = $("lista"); lista.innerHTML = "";
+  const rows = filtrados();
+  if (!rows.length) { lista.innerHTML = '<div class="vazio">Nenhum cadastro encontrado com esses filtros.</div>'; return; }
+  rows.forEach(r => {
+    const c = document.createElement("article"); c.className = "card";
+    const top = document.createElement("div"); top.className = "top";
+    const n = document.createElement("strong"); n.textContent = r.nome;
+    const m = document.createElement("span"); m.className = "meta";
+    m.textContent = [r.congregacao, r.tempo_experiencia, r.turno, new Date(r.criado_em).toLocaleDateString("pt-BR")].filter(Boolean).join(" · ");
+    top.append(n, m); c.append(top);
+    const habs = [...(r.habilidades||[])]; if (r.outras_habilidades) habs.push(r.outras_habilidades);
+    c.append(tags(habs), tags([...(r.disponibilidade||[]), ...(r.participacao||[])], "d"));
+    const extra = [r.tem_ferramentas === true ? "Tem ferramentas" : r.tem_ferramentas === false ? "Sem ferramentas" : "",
+      r.registro && "Registro: " + r.registro, r.tem_veiculo && "Veículo: " + r.tem_veiculo].filter(Boolean).join(" · ");
+    if (extra) { const e = document.createElement("div"); e.className = "meta"; e.textContent = extra; c.append(e); }
+    if (r.observacoes) { const o = document.createElement("p"); o.className = "obs"; o.textContent = r.observacoes; c.append(o); }
+    const ac = document.createElement("div"); ac.className = "acoes";
+    const num = r.whatsapp.replace(/\D/g, ""); const a = document.createElement("a");
+    a.href = "https://wa.me/" + (num.length <= 11 ? "55" + num : num); a.target = "_blank"; a.rel = "noopener";
+    a.textContent = "WhatsApp " + r.whatsapp;
+    const st = document.createElement("span"); st.className = "st " + r.status; st.textContent = r.status;
+    const sel = document.createElement("select"); ["novo","contatado","escalado"].forEach(v => sel.add(new Option("Marcar: " + v, v)));
+    sel.value = r.status;
+    sel.onchange = async () => {
+      const { error } = await sb.from("talentos").update({ status: sel.value }).eq("id", r.id);
+      if (error) { sel.value = r.status; return; }
+      r.status = sel.value; resumo(); render();
+    };
+    ac.append(a, st, sel); c.append(ac); lista.append(c);
+  });
+}
+["busca","fHab","fDisp","fSt"].forEach(id => $(id).addEventListener("input", render));
+
+$("csv").onclick = () => {
+  const cols = ["criado_em","nome","whatsapp","congregacao","habilidades","outras_habilidades","tempo_experiencia","registro","tem_ferramentas","tem_veiculo","disponibilidade","turno","participacao","observacoes","status"];
+  const esc = v => { v = Array.isArray(v) ? v.join("; ") : v == null ? "" : String(v); return '"' + v.replace(/"/g, '""') + '"'; };
+  const csv = "﻿" + cols.join(";") + "\n" + filtrados().map(r => cols.map(c => esc(r[c])).join(";")).join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  a.download = "talentos-obra-sitio.csv"; a.click();
+};
+</script>
+</body>
+</html>

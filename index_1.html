@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cadastro de Talentos — AD Companheirismo</title>
+<meta name="description" content="Some seus dons à construção do sítio da AD Companheirismo Sede.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800&family=Nunito+Sans:wght@400;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+/* Layout: coluna única centralizada, blocos por etapa como "fichas de obra" */
+:root{
+  --chao:#F3F1EA; --papel:#FFFFFF; --tinta:#1F2A22; --suave:#5C6A5F; --linha:#D9DDD3;
+  --mata:#2F5D3A; --mata-claro:#E3EDE2; --ocre:#C98A1B; --ocre-claro:#F8EBD0; --erro:#B3261E;
+  --f-titulo:"Archivo",system-ui,sans-serif; --f-texto:"Nunito Sans",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --chao:#121713; --papel:#1A211C; --tinta:#E8ECE6; --suave:#A3AEA5; --linha:#2E3830;
+  --mata:#7FBF8C; --mata-claro:#223127; --ocre:#E3A93F; --ocre-claro:#3A2F18; --erro:#F2B8B5;
+  color-scheme:dark;}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--chao);color:var(--tinta);font:16px/1.55 var(--f-texto);
+  padding:env(safe-area-inset-top,0) max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
+.wrap{max-width:720px;margin:0 auto}
+header{padding:32px 0 20px;border-bottom:3px solid var(--mata);margin-bottom:24px}
+.kicker{font:700 12px/1 var(--f-texto);letter-spacing:.12em;text-transform:uppercase;color:var(--ocre)}
+h1{font:800 clamp(28px,6vw,40px)/1.08 var(--f-titulo);font-stretch:112%;margin:10px 0 12px;text-wrap:balance;color:var(--mata)}
+header p{margin:0;color:var(--suave);max-width:60ch}
+.verso{margin-top:14px;font-style:italic;color:var(--suave);font-size:15px}
+form{display:grid;gap:20px}
+fieldset{border:1px solid var(--linha);background:var(--papel);border-radius:10px;padding:20px;margin:0;min-width:0}
+legend{font:700 13px/1 var(--f-texto);letter-spacing:.1em;text-transform:uppercase;color:var(--mata);padding:0 6px}
+.titulo-etapa{font:700 19px/1.25 var(--f-titulo);font-stretch:112%;margin:4px 0 4px}
+.dica{color:var(--suave);font-size:14px;margin:0 0 14px}
+label.campo{display:block;font-weight:700;font-size:15px}
+label.campo>input,label.campo>select,label.campo>textarea{display:block;margin-top:6px}
+.grade2{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+@media (max-width:560px){.grade2{grid-template-columns:1fr}}
+.pilha{display:grid;gap:14px}
+input[type=text],input[type=tel],select,textarea{width:100%;font:inherit;font-weight:400;color:var(--tinta);background:var(--chao);
+  border:1px solid var(--linha);border-radius:8px;padding:11px 12px}
+textarea{min-height:110px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--mata);outline-offset:1px;border-color:var(--mata)}
+.opc{font-weight:400;color:var(--suave);font-size:13px}
+.equipe{border-top:1px dashed var(--linha);padding-top:14px;margin-top:14px}
+.equipe:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.equipe h3{font:700 14px/1.2 var(--f-texto);margin:0 0 10px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.equipe h3 small{font-weight:400;color:var(--suave)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.chip span{display:inline-block;padding:8px 13px;border:1px solid var(--linha);border-radius:999px;font-size:14.5px;background:var(--chao);
+  cursor:pointer;user-select:none;transition:background .15s,border-color .15s}
+.chip input:checked+span{background:var(--mata);border-color:var(--mata);color:var(--papel);font-weight:700}
+.chip input:checked+span::before{content:"✓ "}
+.chip input:focus-visible+span{outline:2px solid var(--ocre);outline-offset:2px}
+.aviso-tec{background:var(--ocre-claro);border-left:4px solid var(--ocre);padding:10px 12px;border-radius:6px;font-size:14px;margin-top:14px}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:14.5px}
+.consent input{width:20px;height:20px;margin-top:2px;accent-color:var(--mata);flex:none}
+button{font:700 17px/1 var(--f-titulo);font-stretch:112%;background:var(--mata);color:var(--papel);border:0;border-radius:10px;
+  padding:17px 22px;cursor:pointer;width:100%}
+button:hover{filter:brightness(1.08)} button:disabled{opacity:.6;cursor:wait}
+button:focus-visible{outline:3px solid var(--ocre);outline-offset:2px}
+.msg{padding:12px 14px;border-radius:8px;font-size:15px}
+.msg.erro{background:color-mix(in srgb,var(--erro) 14%,transparent);color:var(--erro);font-weight:700}
+.sucesso{text-align:center;background:var(--papel);border:1px solid var(--linha);border-radius:12px;padding:36px 22px}
+.sucesso h2{font:800 28px/1.1 var(--f-titulo);font-stretch:112%;color:var(--mata);margin:0 0 10px}
+.sucesso p{color:var(--suave);margin:0 auto 18px;max-width:46ch}
+.sucesso button{width:auto}
+footer{margin-top:28px;text-align:center;color:var(--suave);font-size:13px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">AD Companheirismo Sede · Obra do Sítio</div>
+    <h1>Cadastro de Talentos</h1>
+    <p>Queremos conhecer as habilidades e a disponibilidade de cada irmão e irmã para somar na construção do nosso sítio. Leva cerca de 3 minutos.</p>
+    <p class="verso">"Cada um exerça o dom que recebeu para servir os outros." — 1 Pedro 4:10</p>
+  </header>
+
+  <form id="form" novalidate>
+    <fieldset>
+      <legend>Etapa 1</legend>
+      <div class="titulo-etapa">Seus dados</div>
+      <p class="dica">Usaremos o WhatsApp só para combinar sua participação.</p>
+      <div class="pilha">
+        <label class="campo">Nome completo
+          <input type="text" id="nome" name="nome" autocomplete="name" maxlength="120" required placeholder="Nome do irmão ou irmã">
+        </label>
+        <div class="grade2">
+          <label class="campo">WhatsApp
+            <input type="tel" id="whatsapp" name="whatsapp" autocomplete="tel" inputmode="tel" maxlength="20" required placeholder="(00) 00000-0000">
+          </label>
+          <label class="campo">Congregação ou departamento <span class="opc">opcional</span>
+            <input type="text" id="congregacao" name="congregacao" maxlength="120" placeholder="Ex.: Sede, Jovens, Círculo de oração">
+          </label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Etapa 2</legend>
+      <div class="titulo-etapa">Quais habilidades você possui?</div>
+      <p class="dica">Toque em todas que se aplicam. Estão organizadas pelas equipes da obra.</p>
+      <div id="equipes"></div>
+      <label class="campo" style="margin-top:16px">Outras habilidades <span class="opc">opcional</span>
+        <input type="text" id="outras" name="outras" maxlength="300" placeholder="Ex.: soldador, jardinagem, som e iluminação">
+      </label>
+      <div class="aviso-tec">Os trabalhos técnicos e perigosos ficarão sob responsabilidade de profissionais qualificados, com orientação de segurança e cumprimento das normas. Os demais voluntários contribuem em atividades adequadas à sua experiência.</div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Etapa 3</legend>
+      <div class="titulo-etapa">Sua experiência</div>
+      <div class="pilha">
+        <div class="grade2">
+          <label class="campo">Tempo de experiência na área
+            <select id="tempo" name="tempo">
+              <option value="">Selecione</option>
+              <option>Sem experiência</option>
+              <option>Até 2 anos</option>
+              <option>De 2 a 5 anos</option>
+              <option>De 5 a 10 anos</option>
+              <option>Mais de 10 anos</option>
+            </select>
+          </label>
+          <label class="campo">Tem ferramentas próprias?
+            <select id="ferramentas" name="ferramentas">
+              <option value="">Selecione</option>
+              <option value="sim">Sim</option>
+              <option value="nao">Não</option>
+            </select>
+          </label>
+        </div>
+        <label class="campo">Registro ou habilitação <span class="opc">opcional</span>
+          <input type="text" id="registro" name="registro" maxlength="200" placeholder="Ex.: CREA, CAU, CNH categoria D, NR-10, NR-35">
+        </label>
+        <label class="campo">Pode ceder veículo para a obra? <span class="opc">opcional</span>
+          <input type="text" id="veiculo" name="veiculo" maxlength="120" placeholder="Ex.: caminhonete, caminhão caçamba, carro">
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Etapa 4</legend>
+      <div class="titulo-etapa">Qual sua disponibilidade?</div>
+      <p class="dica">Pode marcar mais de uma.</p>
+      <div class="chips" id="disp"></div>
+      <label class="campo" style="margin-top:16px">Período preferido
+        <select id="turno" name="turno">
+          <option value="">Selecione</option>
+          <option>Manhã</option>
+          <option>Tarde</option>
+          <option>Dia todo</option>
+          <option>Tanto faz</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Etapa 5</legend>
+      <div class="titulo-etapa">Como gostaria de participar?</div>
+      <p class="dica">Pode marcar mais de uma.</p>
+      <div class="chips" id="part"></div>
+      <label class="campo" style="margin-top:16px">Experiência profissional e outras informações <span class="opc">opcional</span>
+        <textarea id="obs" name="obs" maxlength="1500" placeholder="Ex.: trabalho há 10 anos como pedreiro, tenho ferramentas, posso ajudar duas vezes por mês…"></textarea>
+      </label>
+    </fieldset>
+
+    <label class="consent">
+      <input type="checkbox" id="consent" required>
+      <span>Autorizo a liderança da AD Companheirismo a usar estes dados apenas para organizar os voluntários da obra do sítio.</span>
+    </label>
+
+    <div id="erro" class="msg erro" role="alert" hidden></div>
+    <button type="submit" id="enviar">Enviar meu cadastro</button>
+  </form>
+
+  <div id="ok" class="sucesso" hidden>
+    <h2>Cadastro recebido!</h2>
+    <p>Deus abençoe sua disposição em servir. A equipe da obra vai entrar em contato pelo WhatsApp para combinar sua participação.</p>
+    <button type="button" id="novo">Cadastrar outra pessoa</button>
+  </div>
+
+  <footer>Assembleia de Deus Companheirismo Sede</footer>
+</div>
+
+<script>
+/* ================== CONFIGURAÇÃO (preencha estas 2 linhas) ================== */
+const SUPABASE_URL = "https://efjmfhoteefwhagrehrz.supabase.co";        // ex.: https://abcd1234.supabase.co
+const SUPABASE_KEY = "sb_publishable_Rsjt7VB3w-mNHc4Ynm3gcw_rGLL9leg";    // sb_publishable_... ou a chave "anon"
+/* ============================================================================ */
+
+const EQUIPES = [
+  ["Planejamento e projetos", "pré-obra", ["Topógrafo","Arquiteto / Urbanista","Engenheiro civil estrutural","Engenheiro geotécnico","Projetista de instalações (elétrica/hidráulica)"]],
+  ["Construção civil", "", ["Mestre de obras","Contramestre","Pedreiro","Meio-oficial","Servente com experiência","Servente sem experiência","Ferreiro / armador","Operador de máquinas pesadas (linha amarela)"]],
+  ["Instalações", "", ["Eletricista instalador","Encanador / bombeiro hidráulico"]],
+  ["Cobertura e estrutura", "", ["Telhadista","Carpinteiro de estrutura"]],
+  ["Acabamento", "", ["Pintor","Marceneiro","Gesseiro","Azulejista / assentador de piso"]],
+  ["Alimentação", "", ["Cozinheiro(a)","Auxiliar de cozinha","Equipe de apoio (servir, limpeza)"]],
+  ["Transporte", "", ["Motorista categoria D","Motorista (outras categorias)"]],
+  ["Administração", "", ["Compras / orçamentos","Secretaria / controle"]],
+  ["Mobilização", "", ["Liderança de departamento","Comunicação / fotografia / vídeo"]],
+  ["Intercessão", "", ["Círculo de oração / intercessor(a)"]],
+];
+const DISP = ["Sábados","Domingos","Durante a semana","Feriados","Uma vez por mês","Conforme minha possibilidade"];
+const PART = ["Trabalho presencial","Doação de materiais ou ferramentas","Contribuição financeira voluntária","Apoio à distância","Oração e intercessão"];
+
+let n = 0;
+const chip = (grupo, valor) => {
+  const id = grupo + "-" + (n++);
+  const l = document.createElement("label"); l.className = "chip";
+  l.innerHTML = `<input type="checkbox" id="${id}" name="${grupo}"><span></span>`;
+  l.querySelector("input").value = valor; l.querySelector("span").textContent = valor;
+  return l;
+};
+const eq = document.getElementById("equipes");
+EQUIPES.forEach(([nome, sub, itens]) => {
+  const d = document.createElement("div"); d.className = "equipe";
+  const h = document.createElement("h3"); h.textContent = nome;
+  if (sub) { const s = document.createElement("small"); s.textContent = sub; h.append(s); }
+  const c = document.createElement("div"); c.className = "chips";
+  itens.forEach(i => c.append(chip("hab", i)));
+  d.append(h, c); eq.append(d);
+});
+DISP.forEach(i => document.getElementById("disp").append(chip("disp", i)));
+PART.forEach(i => document.getElementById("part").append(chip("part", i)));
+
+const $ = id => document.getElementById(id);
+const marcados = g => [...document.querySelectorAll(`input[name="${g}"]:checked`)].map(i => i.value);
+const configurado = SUPABASE_URL.startsWith("https://") && !SUPABASE_KEY.startsWith("COLE");
+const sb = configurado && window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+function erro(t){ const e=$("erro"); e.textContent=t; e.hidden=false; e.scrollIntoView({behavior:"smooth",block:"center"}); }
+
+$("form").addEventListener("submit", async ev => {
+  ev.preventDefault(); $("erro").hidden = true;
+  const nome = $("nome").value.trim(), whats = $("whatsapp").value.trim();
+  const hab = marcados("hab"), outras = $("outras").value.trim();
+  if (nome.length < 3) return erro("Preencha seu nome completo.");
+  if (whats.replace(/\D/g,"").length < 10) return erro("Informe um WhatsApp com DDD.");
+  if (!hab.length && !outras) return erro("Marque pelo menos uma habilidade ou escreva em \"Outras habilidades\".");
+  if (!marcados("disp").length) return erro("Marque pelo menos uma opção de disponibilidade.");
+  if (!$("consent").checked) return erro("Marque a autorização no final para enviar.");
+  if (!sb) return erro("O formulário ainda não foi ligado ao banco de dados. Avise a liderança.");
+
+  const f = $("ferramentas").value;
+  const linha = {
+    nome, whatsapp: whats, congregacao: $("congregacao").value.trim() || null,
+    habilidades: hab, outras_habilidades: outras || null,
+    tempo_experiencia: $("tempo").value || null, registro: $("registro").value.trim() || null,
+    tem_ferramentas: f ? f === "sim" : null, tem_veiculo: $("veiculo").value.trim() || null,
+    disponibilidade: marcados("disp"), turno: $("turno").value || null,
+    participacao: marcados("part"), observacoes: $("obs").value.trim() || null,
+    consentimento: true
+  };
+  const b = $("enviar"); b.disabled = true; b.textContent = "Enviando…";
+  const { error } = await sb.from("talentos").insert(linha);
+  b.disabled = false; b.textContent = "Enviar meu cadastro";
+  if (error) { console.error(error); return erro("Não foi possível enviar agora. Verifique sua internet e tente de novo."); }
+  $("form").hidden = true; $("ok").hidden = false; window.scrollTo({top:0,behavior:"smooth"});
+});
+$("novo").addEventListener("click", () => { $("form").reset(); $("ok").hidden = true; $("form").hidden = false; window.scrollTo({top:0}); });
+</script>
+</body>
+</html>
